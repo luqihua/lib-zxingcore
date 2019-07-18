@@ -27,6 +27,21 @@ public final class Intents {
     }
 
     public static final class Scan {
+
+        /**
+         * 扫描条图片
+         */
+        public static final String SCAN_FRAME_SLIP_BITMAP = "com.google.zxing.client.android.SCAN_FRAME_SLIP_BITMAP";
+
+        /**
+         * 扫描框四边颜色
+         */
+        public static final String SCAN_FRAME_EDGE_COLOR = "com.google.zxing.client.android.SCAN_FRAME_EDGE_COLOR";
+        /**
+         * 扫描线条滑动一次的时间
+         */
+        public static final String SCAN_FRAME_SLIP_TIME = "com.google.zxing.client.android.SCAN_FRAME_SLIP_TIME";
+
         /**
          * 扫描框大小设置
          */

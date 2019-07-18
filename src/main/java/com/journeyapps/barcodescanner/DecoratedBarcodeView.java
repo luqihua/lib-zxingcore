@@ -146,6 +146,18 @@ public class DecoratedBarcodeView extends FrameLayout {
             setStatusText(customPromptMessage);
         }
 
+        // TODO: 2019-07-18 边框颜色
+        final int color = intent.getIntExtra(Intents.Scan.SCAN_FRAME_EDGE_COLOR,-1);
+        viewFinder.setLineColor(color);
+
+
+        // TODO: 2019-07-18 滑动速度
+        final int time = intent.getIntExtra(Intents.Scan.SCAN_FRAME_SLIP_TIME,-1);
+        viewFinder.setSlipCycleTime(time);
+
+        // TODO: 2019-07-18 滑动条图片
+        final int drawableId = intent.getIntExtra(Intents.Scan.SCAN_FRAME_SLIP_BITMAP,0);
+        viewFinder.setSlipDrawable(drawableId);
         // Check to see if the scan should be inverted.
         boolean inverted = intent.getBooleanExtra(Intents.Scan.INVERTED_SCAN, false);
 

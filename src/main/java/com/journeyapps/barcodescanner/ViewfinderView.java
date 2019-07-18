@@ -28,6 +28,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
@@ -182,7 +185,7 @@ public class ViewfinderView extends View {
              */
             if (mSlipAnimator == null) {
                 mSlipAnimator = ValueAnimator.ofInt(frame.top, frame.bottom - mLineHeight)
-                        .setDuration(3000);
+                        .setDuration(mSlipCycleTime);
                 mSlipAnimator.setRepeatCount(ValueAnimator.INFINITE);
                 mSlipAnimator.setRepeatMode(ValueAnimator.RESTART);
                 mSlipAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -196,7 +199,6 @@ public class ViewfinderView extends View {
             }
         }
     }
-
 
 
     /**
@@ -218,19 +220,18 @@ public class ViewfinderView extends View {
     /*-----------------------自定义方法和属性--------------------------*/
     //画边框相关属性
     private Paint mLinePaint;//边框画笔
-    private final int mLineColor = Color.parseColor("#419afe");//边框的颜色
+    private int mLineColor = Color.parseColor("#419afe");//边框的颜色
 
     //滑动条相关属性
-    private Bitmap mLineBm;//滑动条图片
-    private RectF mLineReact;//滑动条区域
-    private final int mLineHeight = 30;//滑动条的高度
+    private Drawable mLineDrawable;//滑动条图片
+    private Rect mLineReact;//滑动条区域
+    private final int mLineHeight = 60;//滑动条的高度
     private int mSlipLineY;//滑动条绘制的Y起始位置
-
+    private int mSlipCycleTime = 3000;//滑动条从头到尾为滑动一次的时间,设置该值可控制速度
     //文字相关属性
     private Paint mTextPaint;//画提示语的画笔
     private String mPromptText;//扫码的提示语
     private int mTextMargin;//提示语距离扫描框的大小
-
 
     /**
      * 改方法在构造方法中调用用来初始化属性
@@ -244,7 +245,7 @@ public class ViewfinderView extends View {
         mLinePaint.setStrokeWidth(20);
         mLinePaint.setColor(mLineColor);
         //初始化滑动条
-        mLineBm = BitmapFactory.decodeResource(getResources(), R.drawable.lan);
+        mLineDrawable = ContextCompat.getDrawable(context, R.drawable.lan);
         //初始化提示语的画笔
         mTextPaint = new Paint();
         mTextPaint.setColor(Color.WHITE);
@@ -285,10 +286,12 @@ public class ViewfinderView extends View {
      */
     private void drawSlipLine(Rect frame, Canvas canvas) {
         if (mLineReact == null) {
-            mLineReact = new RectF(frame.left + 5, frame.top, frame.right - 5, frame.top + mLineHeight);
+            mLineReact = new Rect(frame.left + 5, frame.top, frame.right - 5, frame.top + mLineHeight);
+        }else {
+            mLineReact.offsetTo(frame.left + 5, mSlipLineY);
         }
-        mLineReact.offsetTo(frame.left + 5, mSlipLineY);
-        canvas.drawBitmap(mLineBm, null, mLineReact, null);
+        mLineDrawable.setBounds(mLineReact);
+        mLineDrawable.draw(canvas);
     }
 
     /**
@@ -324,6 +327,33 @@ public class ViewfinderView extends View {
         }
     }
 
+    //设置从上到下滑动一次时间，可控制速度 默认必须 > 500毫秒
+    public void setSlipCycleTime(int time) {
+        if (time > 500) {
+            this.mSlipCycleTime = time;
+        }
+    }
+
+
+    //设置四边框颜色
+    public void setLineColor(int color) {
+        if (color != -1) {
+            this.mLineColor = color;
+            mLinePaint.setColor(mLineColor);
+        }
+    }
+
+    //设置滑动条
+    public void setSlipDrawable(int  drawableId) {
+        try {
+            Drawable drawable = ContextCompat.getDrawable(getContext(), drawableId);
+            if (drawable != null) {
+                mLineDrawable = drawable;
+            }
+        }catch (Resources.NotFoundException e){
+           e.printStackTrace();
+        }
+    }
 
     /**
      * 将sp值转换为px值，保证文字大小不变

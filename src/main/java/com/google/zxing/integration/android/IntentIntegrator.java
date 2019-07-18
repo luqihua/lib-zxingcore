@@ -20,9 +20,11 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.DrawableRes;
 
 import com.google.zxing.client.android.Intents;
 import com.journeyapps.barcodescanner.CaptureActivity;
@@ -141,9 +143,30 @@ public class IntentIntegrator {
         return this;
     }
 
+    /**
+     * 设置扫描速度
+     *
+     * @param time 滑动一次需要的时间
+     * @return
+     */
+    public IntentIntegrator setFrameSlipSpeed(int time) {
+        addExtra(Intents.Scan.SCAN_FRAME_SLIP_TIME, time);
+        return this;
+    }
 
-    // TODO: 2019/5/29
+    /**
+     *  边框条的颜色
+     * @param color
+     */
+    public IntentIntegrator setFrameEdgeColor(int color) {
+        addExtra(Intents.Scan.SCAN_FRAME_EDGE_COLOR, color);
+        return this;
+    }
 
+    public IntentIntegrator setSlipDrawable( @DrawableRes int drawableId) {
+        addExtra(Intents.Scan.SCAN_FRAME_SLIP_BITMAP, drawableId);
+        return this;
+    }
     /**
      * 设置扫描框的大小
      *
